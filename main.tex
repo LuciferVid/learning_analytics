@@ -1,0 +1,165 @@
+% IEEE Double-Column Template with Appendix
+% Compile: pdflatex → bibtex → pdflatex → pdflatex
+
+\documentclass[conference]{IEEEtran}
+
+\IEEEoverridecommandlockouts
+
+\usepackage[numbers]{natbib}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{listings}
+
+% Code listing style
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  captionpos=b
+}
+
+\begin{document}
+
+% ---------- TITLE ----------
+\title{Intelligent Learning Analytics and Agentic Study Coach}
+
+\author{
+\IEEEauthorblockN{Team Members Name separated by Comma}
+\IEEEauthorblockA{
+Team Name \\}
+}
+
+\maketitle
+
+% ---------- ABSTRACT ----------
+\begin{abstract}
+This document presents a data-driven learning analytics system. We implemented a system using Logistic Regression to classify student performance into three categories: At-risk, Average, and High-performing. The system achieves an accuracy of approximately 70\% on the test set and provides rule-based study recommendations to assist students in their learning journey.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Data mining, machine learning, Logistic Regression, student performance, learning analytics.
+\end{IEEEkeywords}
+
+% ---------- INTRODUCTION ----------
+\section{Introduction}
+The educational landscape is increasingly utilizing data to improve student outcomes. Identifying students who may be at risk of academic failure early on allows for timely intervention. This project aims to bridge the gap between performance data and actionable study plans.
+
+% ---------- RELATED WORK ----------
+\section{Related Work}
+Previous research in Educational Data Mining (EDM) has explored various classification techniques, including Decision Trees, SVMs, and Neural Networks, to predict student success based on demographic and historical grade data.
+
+% ---------- METHODOLOGY ----------
+\section{Methodology}
+
+\subsection{Dataset Description}
+The dataset consists of 1,000 student records from a simulated exam environment, featuring eight attributes: gender, race/ethnicity, parental education, lunch type, test preparation course, math score, reading score, and writing score.
+
+\subsection{Preprocessing}
+Categorical variables were encoded using Label Encoding. Scores were aggregated to calculate total percentages. The data was scaled using Standard Scaler before training models.
+
+\subsection{Feature Engineering}
+A new feature, "performance category," was derived from the average of the three test scores, serving as the target variable for multi-class classification.
+
+\subsection{Models Used}
+We evaluated Logistic Regression as our baseline model for performance classification.
+
+\subsection{Training and Validation}
+The dataset was split into 80\% training and 20\% testing sets. Performance was evaluated using Accuracy, Precision, Recall, and F1-score.
+
+% ---------- RESULTS ----------
+\section{Results}
+
+\subsection{Quantitative Results}
+The Logistic Regression model was trained to predict student performance levels based on demographic data. The overall accuracy achieved was 70\%. Table I summarizes the performance across different metrics.
+
+\begin{table}[ht]
+\centering
+\caption{Model Performance Metrics}
+\begin{tabular}{lcccc}
+\toprule
+Model & Acc & Prec & Rec & F1 \\
+\midrule
+Logistic Regression & 0.70 & 0.54 & 0.70 & 0.59 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Figures}
+Exploratory Data Analysis revealed strong correlations between math, reading, and writing scores. Figure 1 shows the distribution of scores across the three subjects.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.45\textwidth]{results/score_dist.pdf}
+\caption{Box plot showing student score distributions for math, reading, and writing.}
+\label{fig:score_dist}
+\end{figure}
+
+Figure 2 illustrates the distribution of total scores segmented by gender, showing similar performance levels across demographics with some variation in outliers.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.45\textwidth]{results/gender_score.pdf}
+\caption{Violin plot of total scores by gender.}
+\label{fig:gender_score}
+\end{figure}
+
+% ---------- DISCUSSION ----------
+\section{Discussion}
+While the baseline model achieved decent accuracy, the precision for 'At-risk' students was low, suggesting that demographics alone are not sufficient predictors of failure. Future milestones will incorporate historical performance and agentic reasoning to improve diagnostic accuracy.
+
+% ---------- CONCLUSION ----------
+\section{Conclusion}
+This study demonstrated the effectiveness of Logistic Regression in classifying student performance based on demographic indicators. While demographic data provides a baseline for identifying at-risk students, the inclusion of more granular behavioral data and the development of personalized interventions are necessary for sustained academic improvement. Future work could explore more complex ensemble models and autonomous agentic reasoning to provide 24/7 learning assistance.
+
+% ---------- REFERENCES ----------
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+
+% ---------- APPENDIX ----------
+\appendix
+
+\section{GitHub Repository Information}
+
+This appendix provides details regarding the project’s GitHub repository and associated file structure for reproducibility and open-source collaboration.
+
+\subsection{Repository Link}
+The code and docs are available at:
+
+\begin{center}
+\textbf{\url{https://github.com/LuciferVid/learning_analytics}}
+\end{center}
+
+\subsection{Repository Structure}
+
+The project follows this layout:
+\begin{lstlisting}
+.
+|-- data/ (datasets)
+|-- notebooks/ (EDA)
+|-- src/ (preprocessing/logic)
+|-- models/ (trained pkls)
+|-- results/ (plots)
+|-- app.py (streamlit app)
+|-- main.tex (this report)
+`-- requirements.txt
+\end{lstlisting}
+
+\subsection{Key Components}
+
+\begin{itemize}
+    \item \textbf{data/}: Raw student score data.
+    \item \textbf{notebooks/}: Initial analysis and experiments.
+    \item \textbf{src/}: Python modules for cleaning and modeling.
+    \item \textbf{models/}: Saved model, scaler, and encoders.
+    \item \textbf{results/}: Generated graphs and tables.
+    \item \textbf{app.py}: Interactive dashboard implementation.
+\end{itemize}
+
+\end{document}
