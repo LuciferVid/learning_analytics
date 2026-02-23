@@ -93,6 +93,22 @@ elif menu == "Batch Data":
                 fig2, ax2 = plt.subplots()
                 data['parental level of education'].value_counts().plot.pie(autopct='%1.1f%%', ax=ax2)
                 st.pyplot(fig2)
+            
+            st.write("---")
+            st.write("### Category Analysis")
+            fig3, ax3 = plt.subplots()
+            # Derive the category if not present
+            if 'performance_category' not in data.columns:
+                def get_grade(score):
+                    if score >= 80: return 'High-performing'
+                    if score >= 50: return 'Average'
+                    return 'At-risk'
+                data['total_score'] = data['math score'] + data['reading score'] + data['writing score']
+                data['performance_category'] = (data['total_score'] / 3).apply(get_grade)
+            
+            data['performance_category'].value_counts().plot.bar(ax=ax3, color=['#4CAF50','#FFC107','#F44336'])
+            plt.xticks(rotation=0)
+            st.pyplot(fig3)
         
         if st.button("Predict Risks"):
             if model:
@@ -106,6 +122,13 @@ elif menu == "Batch Data":
                 
                 st.success("Done!")
                 st.dataframe(data[['gender', 'race/ethnicity', 'Risk Level']])
+                
+                # add a graph for predicted risks
+                st.write("### Predicted Risk Breakdown")
+                fig_out, ax_out = plt.subplots()
+                data['Risk Level'].value_counts().plot.bar(ax=ax_out, color=['#ff9999','#66b3ff','#99ff99'])
+                plt.xticks(rotation=45)
+                st.pyplot(fig_out)
             else:
                 st.error("Model files missing in models/ folder")
 
