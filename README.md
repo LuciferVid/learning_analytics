@@ -15,6 +15,17 @@ This project is about analyzing student scores (math, reading, writing) and find
 2. Run app: `streamlit run app.py`
 3. If you want to retrain: `python3 src/models.py`
 
+## System Workflow
+```mermaid
+graph TD
+    A[Upload CSV Data] --> B[Data Preprocessing]
+    B --> C[Feature Engineering]
+    C --> D[Logistic Regression Inference]
+    D --> E[Risk Level Classification]
+    E --> F[Generate Study Tips]
+    F --> G[Interactive Visualization]
+```
+
 ## Main Features
 - Cleans and encodes demographic data automatically.
 - Predicts risk levels using a trained ML model.

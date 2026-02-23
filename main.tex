@@ -57,6 +57,18 @@ Previous research in Educational Data Mining (EDM) has explored various classifi
 
 % ---------- METHODOLOGY ----------
 \section{Methodology}
+The methodology involves data collection, preprocessing, and the application of a classification model.
+
+\subsection{System Workflow}
+The application follows a structured data pipeline to ensure accurate analysis:
+\begin{enumerate}
+    \item \textbf{Data Ingestion}: Raw student performance data (CSV) is uploaded via the dashboard.
+    \item \textbf{Preprocessing}: Demographic features are encoded using Label Encoding, and scores are scaled using standard normalization.
+    \item \textbf{Feature Engineering}: Total and average percentages are calculated to categorize students into performance levels (At-risk, Average, High-performing).
+    \item \textbf{Inference}: A trained Logistic Regression model predicts the risk level based on the processed features.
+    \item \textbf{Recommendation Engine}: A rule-based system generates targeted study tips based on performance gaps.
+    \item \textbf{Visualization}: The results are presented through interactive charts and tables.
+\end{enumerate}
 
 \subsection{Dataset Description}
 The dataset consists of 1,000 student records from a simulated exam environment, featuring eight attributes: gender, race/ethnicity, parental education, lunch type, test preparation course, math score, reading score, and writing score.
