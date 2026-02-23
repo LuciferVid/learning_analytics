@@ -109,6 +109,13 @@ elif menu == "Batch Data":
             data['performance_category'].value_counts().plot.bar(ax=ax3, color=['#4CAF50','#FFC107','#F44336'])
             plt.xticks(rotation=0)
             st.pyplot(fig3)
+            
+            st.write("---")
+            st.write("### Detailed Score Distributions")
+            fig4, ax4 = plt.subplots(figsize=(10, 6))
+            sns.boxplot(data=data[['math score', 'reading score', 'writing score']], ax=ax4, palette='Set3')
+            ax4.set_title("Box Plot of Study Scores")
+            st.pyplot(fig4)
         
         if st.button("Predict Risks"):
             if model:
