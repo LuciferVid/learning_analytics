@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# Streamlit
+.streamlit/
+
+# OS
+.DS_Store
+
+# Brain/Artifacts
+.gemini/
+.system_generated/
+/Users/vid/.gemini/antigravity/brain/
