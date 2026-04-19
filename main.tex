@@ -109,6 +109,27 @@ Logistic Regression & 0.70 & 0.54 & 0.70 & 0.59 \\
 \end{tabular}
 \end{table}
 
+To provide dataset-level context for the model performance, Table II reports key descriptive statistics and class distribution after deriving performance categories from average score thresholds.
+
+\begin{table}[ht]
+\centering
+\caption{Dataset Summary (StudentsPerformance.csv)}
+\begin{tabular}{lc}
+\toprule
+Statistic & Value \\
+\midrule
+Total students & 1000 \\
+Mean math score & 66.09 \\
+Mean reading score & 69.17 \\
+Mean writing score & 68.05 \\
+Mean overall score & 67.77 \\
+At-risk count & 103 \\
+Average count & 699 \\
+High-performing count & 198 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 \subsection{Milestone 2 Functional Results}
 The deployed agentic coach successfully generates the required structured report sections for user-defined goals:
 \begin{itemize}
@@ -137,6 +158,15 @@ Figure 2 illustrates the distribution of total scores segmented by gender, showi
 \includegraphics[width=0.45\textwidth]{results/gender_score.pdf}
 \caption{Violin plot of total scores by gender.}
 \label{fig:gender_score}
+\end{figure}
+
+Figure 3 presents the subject-wise correlation matrix, confirming that strong positive relationships exist between math, reading, and writing scores.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.45\textwidth]{results/correlation.pdf}
+\caption{Correlation heatmap for core score features.}
+\label{fig:correlation}
 \end{figure}
 
 % ---------- DISCUSSION ----------
