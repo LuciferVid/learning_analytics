@@ -141,33 +141,8 @@ The deployed agentic coach successfully generates the required structured report
 \end{itemize}
 The system supports session-level coaching history and report export (Markdown/PDF). A robustness fix was integrated in the PDF pipeline to safely handle long unbroken tokens (such as URLs), preventing rendering failures in deployment environments.
 
-\subsection{Figures}
-Exploratory Data Analysis revealed strong correlations between math, reading, and writing scores. Figure 1 shows the distribution of scores across the three subjects.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.45\textwidth]{results/score_dist.pdf}
-\caption{Box plot showing student score distributions for math, reading, and writing.}
-\label{fig:score_dist}
-\end{figure}
-
-Figure 2 illustrates the distribution of total scores segmented by gender, showing similar performance levels across demographics with some variation in outliers.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.45\textwidth]{results/gender_score.pdf}
-\caption{Violin plot of total scores by gender.}
-\label{fig:gender_score}
-\end{figure}
-
-Figure 3 presents the subject-wise correlation matrix, confirming that strong positive relationships exist between math, reading, and writing scores.
-
-\begin{figure}[ht]
-\centering
-\includegraphics[width=0.45\textwidth]{results/correlation.pdf}
-\caption{Correlation heatmap for core score features.}
-\label{fig:correlation}
-\end{figure}
+\subsection{Qualitative Observations}
+Exploratory analysis indicated that math, reading, and writing scores are positively related, and distribution-level behavior was consistent with the class balance shown in Table II.
 
 % ---------- DISCUSSION ----------
 \section{Discussion}
