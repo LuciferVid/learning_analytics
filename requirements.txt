@@ -6,3 +6,11 @@ seaborn
 streamlit>=1.35.0
 jupyter
 ipykernel
+
+# Milestone 2 (agentic coach)
+requests
+feedparser
+huggingface_hub
+transformers
+torch
+fpdf2

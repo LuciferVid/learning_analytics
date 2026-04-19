@@ -12,6 +12,8 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
 from data_preprocessing import load_and_preprocess_data
 from recommendations import generate_recommendations
+from study_coach import CoachInputs, generate_coach_report
+from pdf_export import report_markdown_to_pdf_bytes
 
 st.set_page_config(page_title="Learning Analytics Dashboard", layout="wide")
 
@@ -54,7 +56,7 @@ rev_map = {v: k for k, v in mapping.items()} if mapping else {}
 
 # Simple sidebar navigation
 st.sidebar.title("Navigation")
-menu = st.sidebar.radio("Go to", ["Home", "Batch Data", "Get Recommendations", "Info"])
+menu = st.sidebar.radio("Go to", ["Home", "Batch Data", "Get Recommendations", "AI Study Coach", "Info"])
 
 if menu == "Home":
     st.title("Student Performance Analytics")
@@ -161,6 +163,104 @@ elif menu == "Get Recommendations":
         
         for t in tips:
             st.info(t)
+
+elif menu == "AI Study Coach":
+    st.header("Agentic AI Study Coach (Milestone 2)")
+    st.write("Diagnose learning gaps, build a multi-week plan, and retrieve learning resources (free).")
+
+    left, right = st.columns([1, 1])
+    with left:
+        goal = st.text_input("Student goal", value="Prepare for upcoming exams and improve weak areas")
+        preferred_style = st.selectbox(
+            "Preferred study style",
+            ["Balanced (review + practice)", "Practice-heavy", "Concept-heavy", "Short daily sessions"],
+            index=0,
+        )
+        hours_per_week = st.slider("Available study time (hours/week)", 1, 30, 6)
+        weeks = st.slider("Time horizon (weeks)", 1, 12, 4)
+
+    with right:
+        st.subheader("Current scores")
+        m_score = st.slider("Math score", 0, 100, 50, key="m2_math")
+        r_score = st.slider("Reading score", 0, 100, 50, key="m2_reading")
+        w_score = st.slider("Writing score", 0, 100, 50, key="m2_writing")
+
+    c1, c2 = st.columns([1, 1])
+    with c1:
+        run = st.button("Generate Coach Report", type="primary")
+    with c2:
+        st.caption("Tip: set `HF_API_TOKEN` for faster hosted inference; otherwise it will try a local open-source model.")
+
+    if run:
+        inputs = CoachInputs(
+            goal=goal.strip() or "Improve learning outcomes",
+            hours_per_week=int(hours_per_week),
+            weeks=int(weeks),
+            math_score=int(m_score),
+            reading_score=int(r_score),
+            writing_score=int(w_score),
+            preferred_style=preferred_style,
+        )
+
+        with st.spinner("Thinking, planning, and retrieving resources..."):
+            result = generate_coach_report(inputs)
+
+        st.success(f"Report ready (generator: {result['llm_provider']}).")
+
+        st.subheader("Coach report")
+        st.markdown(result["report_markdown"])
+
+        # lightweight session memory (optional requirement)
+        st.session_state.setdefault("coach_history", [])
+        st.session_state["coach_history"].append(
+            {
+                "generated_on": result["generated_on"],
+                "goal": inputs.goal,
+                "hours_per_week": inputs.hours_per_week,
+                "weeks": inputs.weeks,
+                "avg": result["diagnosis"]["average_score"],
+                "risk": result["diagnosis"]["risk_level"],
+                "provider": result["llm_provider"],
+                "report": result["report_markdown"],
+            }
+        )
+
+        md_bytes = result["report_markdown"].encode("utf-8")
+        pdf_bytes = report_markdown_to_pdf_bytes("AI Study Coach Report", result["report_markdown"])
+        d1, d2 = st.columns(2)
+        with d1:
+            st.download_button("Download report (Markdown)", data=md_bytes, file_name="study_coach_report.md")
+        with d2:
+            st.download_button("Download report (PDF)", data=pdf_bytes, file_name="study_coach_report.pdf")
+
+        st.divider()
+        st.subheader("Retrieved resources (URLs)")
+        if result["resources"]:
+            for r in result["resources"]:
+                st.markdown(f"- **{r.title}**  \n{r.url}")
+        else:
+            st.info("No resources retrieved (network might be blocked). The plan still works via fallback.")
+
+        st.divider()
+        with st.expander("Session memory (previous coach runs)"):
+            hist = st.session_state.get("coach_history", [])
+            if not hist:
+                st.write("No previous runs yet.")
+            else:
+                st.dataframe(
+                    [
+                        {
+                            "date": h["generated_on"],
+                            "avg": h["avg"],
+                            "risk": h["risk"],
+                            "hours/week": h["hours_per_week"],
+                            "weeks": h["weeks"],
+                            "provider": h["provider"],
+                            "goal": h["goal"],
+                        }
+                        for h in hist[-20:][::-1]
+                    ]
+                )
 
 elif menu == "Info":
     st.header("About This App")
