@@ -40,11 +40,11 @@ Team Name \\}
 
 % ---------- ABSTRACT ----------
 \begin{abstract}
-This document presents a data-driven learning analytics system. We implemented a system using Logistic Regression to classify student performance into three categories: At-risk, Average, and High-performing. The system achieves an accuracy of approximately 70\% on the test set and provides rule-based study recommendations to assist students in their learning journey.
+This paper presents an end-to-end Intelligent Learning Analytics and Agentic Study Coach system. In Milestone 1, we built a machine learning pipeline using Logistic Regression to classify students into At-risk, Average, and High-performing categories with approximately 70\% test accuracy, and generated baseline rule-based recommendations. In Milestone 2, we extended the system into an agentic study coach that accepts student goals, diagnoses learning gaps, retrieves relevant learning resources using a free arXiv API workflow, and generates structured multi-week study plans through an open-source/free-tier LLM pipeline with robust fallback logic. The final system is deployed through a Streamlit interface with downloadable Markdown/PDF reports and session-based memory for iterative coaching.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Data mining, machine learning, Logistic Regression, student performance, learning analytics.
+Educational data mining, learning analytics, Logistic Regression, agentic AI, study planning, retrieval-augmented recommendations.
 \end{IEEEkeywords}
 
 % ---------- INTRODUCTION ----------
@@ -57,17 +57,19 @@ Previous research in Educational Data Mining (EDM) has explored various classifi
 
 % ---------- METHODOLOGY ----------
 \section{Methodology}
-The methodology involves data collection, preprocessing, and the application of a classification model.
+The methodology is organized in two layers: (1) ML-based analytics for performance prediction and (2) an agentic coaching layer for personalized planning.
 
 \subsection{System Workflow}
-The application follows a structured data pipeline to ensure accurate analysis:
+The final application follows a hybrid analytics + agentic pipeline:
 \begin{enumerate}
     \item \textbf{Data Ingestion}: Raw student performance data (CSV) is uploaded via the dashboard.
-    \item \textbf{Preprocessing}: Demographic features are encoded using Label Encoding, and scores are scaled using standard normalization.
-    \item \textbf{Feature Engineering}: Total and average percentages are calculated to categorize students into performance levels (At-risk, Average, High-performing).
-    \item \textbf{Inference}: A trained Logistic Regression model predicts the risk level based on the processed features.
-    \item \textbf{Recommendation Engine}: A rule-based system generates targeted study tips based on performance gaps.
-    \item \textbf{Visualization}: The results are presented through interactive charts and tables.
+    \item \textbf{Preprocessing and Feature Engineering}: Categorical demographic features are label-encoded; total and percentage scores are computed to derive performance categories.
+    \item \textbf{ML Inference (Milestone 1)}: A trained Logistic Regression model predicts student risk/performance labels.
+    \item \textbf{Goal Capture (Milestone 2)}: The student provides a learning goal, study style, available weekly time, and study horizon.
+    \item \textbf{Learning Diagnosis}: The agentic layer identifies strengths, gap areas, and risk level using student scores and derived indicators.
+    \item \textbf{Resource Retrieval}: Gap-aware queries are sent to the arXiv API to collect relevant learning resources and URLs.
+    \item \textbf{Plan Generation}: An LLM-based module creates a structured report with diagnosis, personalized plan, weekly goals, resources, and next steps.
+    \item \textbf{Fallback and Delivery}: If LLM inference is unavailable, a rule-based planner generates the same required structured output; reports are shown in UI and exported as Markdown/PDF.
 \end{enumerate}
 
 \subsection{Dataset Description}
@@ -80,7 +82,11 @@ Categorical variables were encoded using Label Encoding. Scores were aggregated 
 A new feature, "performance category," was derived from the average of the three test scores, serving as the target variable for multi-class classification.
 
 \subsection{Models Used}
-We evaluated Logistic Regression as our baseline model for performance classification.
+We used two model components:
+\begin{itemize}
+    \item \textbf{Logistic Regression} for supervised student performance classification (Milestone 1).
+    \item \textbf{Open-source/free-tier LLM workflow} for plan generation (Milestone 2), using Hugging Face inference when token access is available, otherwise local open-source inference, and a deterministic fallback template if model calls fail.
+\end{itemize}
 
 \subsection{Training and Validation}
 The dataset was split into 80\% training and 20\% testing sets. Performance was evaluated using Accuracy, Precision, Recall, and F1-score.
@@ -103,6 +109,17 @@ Logistic Regression & 0.70 & 0.54 & 0.70 & 0.59 \\
 \end{tabular}
 \end{table}
 
+\subsection{Milestone 2 Functional Results}
+The deployed agentic coach successfully generates the required structured report sections for user-defined goals:
+\begin{itemize}
+    \item Learning diagnosis (risk, strengths, and learning gaps),
+    \item Personalized multi-week study plan,
+    \item Weekly milestones/goals,
+    \item Recommended resources with URLs,
+    \item Progress feedback and next-step guidance.
+\end{itemize}
+The system supports session-level coaching history and report export (Markdown/PDF). A robustness fix was integrated in the PDF pipeline to safely handle long unbroken tokens (such as URLs), preventing rendering failures in deployment environments.
+
 \subsection{Figures}
 Exploratory Data Analysis revealed strong correlations between math, reading, and writing scores. Figure 1 shows the distribution of scores across the three subjects.
 
@@ -124,11 +141,11 @@ Figure 2 illustrates the distribution of total scores segmented by gender, showi
 
 % ---------- DISCUSSION ----------
 \section{Discussion}
-While the baseline model achieved decent accuracy, the precision for 'At-risk' students was low, suggesting that demographics alone are not sufficient predictors of failure. Future milestones will incorporate historical performance and agentic reasoning to improve diagnostic accuracy.
+While the baseline classifier offers useful risk stratification, precision for identifying At-risk students remains limited when relying mainly on demographic and exam aggregates. The agentic extension improves practical usefulness by converting model outputs and score gaps into actionable, time-aware study plans. Resource retrieval from arXiv provides transparent, citeable references, but retrieved materials can be research-oriented for some learners. LLM-based plan quality depends on model availability and latency; therefore, a deterministic fallback planner was included to preserve reliability and maintain required output structure under constrained free-tier conditions.
 
 % ---------- CONCLUSION ----------
 \section{Conclusion}
-This study demonstrated the effectiveness of Logistic Regression in classifying student performance based on demographic indicators. While demographic data provides a baseline for identifying at-risk students, the inclusion of more granular behavioral data and the development of personalized interventions are necessary for sustained academic improvement. Future work could explore more complex ensemble models and autonomous agentic reasoning to provide 24/7 learning assistance.
+This work demonstrates a complete progression from classical learning analytics to an agentic AI study coach. Logistic Regression provided an interpretable baseline for student risk classification, and the Milestone 2 extension operationalized these insights through goal-driven diagnosis, resource retrieval, and personalized study planning in a publicly deployable interface. The resulting system satisfies the required educational outputs while remaining compatible with free/open-source tooling. Future work can include persistent longitudinal memory, adaptive difficulty calibration, and domain-specific retrieval corpora to improve pedagogical alignment.
 
 % ---------- REFERENCES ----------
 \bibliographystyle{IEEEtran}
@@ -155,7 +172,7 @@ The project follows this layout:
 .
 |-- data/ (datasets)
 |-- notebooks/ (EDA)
-|-- src/ (preprocessing/logic)
+|-- src/ (preprocessing, models, coach modules)
 |-- models/ (trained pkls)
 |-- results/ (plots)
 |-- app.py (streamlit app)
@@ -168,10 +185,10 @@ The project follows this layout:
 \begin{itemize}
     \item \textbf{data/}: Raw student score data.
     \item \textbf{notebooks/}: Initial analysis and experiments.
-    \item \textbf{src/}: Python modules for cleaning and modeling.
+    \item \textbf{src/}: Python modules for preprocessing, ML inference, agentic coaching, retrieval, and PDF export.
     \item \textbf{models/}: Saved model, scaler, and encoders.
     \item \textbf{results/}: Generated graphs and tables.
-    \item \textbf{app.py}: Interactive dashboard implementation.
+    \item \textbf{app.py}: Interactive Streamlit dashboard with Milestone 1 and Milestone 2 workflows.
 \end{itemize}
 
 \end{document}
