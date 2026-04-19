@@ -1,11 +1,7 @@
 # Intelligent Learning Analytics and Agentic Study Coach
 
-This project builds a learning analytics system in two milestones:
-
-- **Milestone 1 (ML analytics):** preprocess student data, classify risk/performance levels, and provide baseline recommendations.
-- **Milestone 2 (agentic AI coach):** diagnose learning gaps from student scores/goals, retrieve relevant resources, and generate structured multi-week study plans.
-
-The application is implemented with **Streamlit** and designed for **public hosting** with free/open-source components.
+Intelligent Learning Analytics is a Streamlit-based application for student performance analysis and personalized study planning.  
+It combines classical machine learning for risk classification with an agentic AI coaching workflow that generates actionable, structured learning plans.
 
 ## Datasets
 
@@ -15,10 +11,10 @@ The application is implemented with **Streamlit** and designed for **public host
 
 ## Project Structure
 
-- `app.py` - Streamlit UI (Milestone 1 + Milestone 2 pages)
+- `app.py` - Streamlit user interface
 - `src/data_preprocessing.py` - preprocessing and feature preparation
 - `src/models.py` - training and model persistence
-- `src/recommendations.py` - rule-based recommendation logic (Milestone 1)
+- `src/recommendations.py` - rule-based recommendation logic
 - `src/study_coach.py` - diagnosis, planning orchestration, structured report generation
 - `src/resource_retrieval.py` - arXiv API retrieval for learning resources
 - `src/llm_client.py` - free/open-source LLM integration with fallback
@@ -41,13 +37,13 @@ The application is implemented with **Streamlit** and designed for **public host
    streamlit run app.py
    ```
 
-3. (Optional) Retrain Milestone 1 model:
+3. (Optional) Retrain the classification model:
 
    ```bash
    python3 src/models.py
    ```
 
-## Milestone 1: ML-Based Learning Analytics
+## Machine Learning Analytics Layer
 
 ### Inputs
 
@@ -65,18 +61,18 @@ graph TD
     F --> G[Interactive Dashboard]
 ```
 
-### Milestone 1 Features
+### Key Features
 
 - Cleans and encodes categorical student attributes.
 - Computes performance category (`At-risk`, `Average`, `High-performing`).
 - Trains and serves Logistic Regression risk classifier.
 - Visualizes score/risk distributions in dashboard.
 
-## Milestone 2: Agentic AI Study Coach
+## Agentic AI Study Coach
 
-### Objective
+### Capabilities
 
-Extend analytics into an AI study coach that:
+The coach module:
 
 - accepts student goals,
 - diagnoses learning gaps,
@@ -96,7 +92,7 @@ graph TD
     F --> G[Download as Markdown or PDF]
 ```
 
-### Milestone 2 Features Implemented
+### Implemented Features
 
 - New **AI Study Coach** page in Streamlit UI.
 - Goal-aware diagnosis with risk and gap reasoning.
@@ -120,7 +116,7 @@ For better hosted performance, set:
 
 If not set, the app attempts local inference and then safe fallback behavior.
 
-## Required Structured Output (Milestone 2)
+## Structured Output Schema
 
 Generated coach report includes:
 
@@ -135,7 +131,7 @@ Generated coach report includes:
 - `Home` - overview and project status
 - `Batch Data` - upload CSV and run batch analysis/risk prediction
 - `Get Recommendations` - quick individual recommendations
-- `AI Study Coach` - full milestone 2 agentic coach workflow
+- `AI Study Coach` - full agentic coaching workflow
 - `Info` - app context
 
 ## Limitations
@@ -144,8 +140,3 @@ Generated coach report includes:
 - arXiv retrieval may return research-oriented resources rather than beginner tutorials.
 - Session memory is runtime-based (not persistent database memory).
 
-## Submission Checklist
-
-- Publicly hosted app link (Streamlit/HF/Render)
-- GitHub repository link
-- Demo video (5-7 minutes) covering Milestone 1 + Milestone 2 flows
