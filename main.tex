@@ -40,66 +40,58 @@ Team Name \\}
 
 % ---------- ABSTRACT ----------
 \begin{abstract}
-This paper presents an end-to-end Intelligent Learning Analytics and Agentic Study Coach system. In Milestone 1, we built a machine learning pipeline using Logistic Regression to classify students into At-risk, Average, and High-performing categories with approximately 70\% test accuracy, and generated baseline rule-based recommendations. In Milestone 2, we extended the system into an agentic study coach that accepts student goals, diagnoses learning gaps, retrieves relevant learning resources using a free arXiv API workflow, and generates structured multi-week study plans through an open-source/free-tier LLM pipeline with robust fallback logic. The final system is deployed through a Streamlit interface with downloadable Markdown/PDF reports and session-based memory for iterative coaching.
+This document presents an end-to-end learning analytics research project implemented using machine learning and agentic AI workflows. The system first classifies student performance into At-risk, Average, and High-performing categories using Logistic Regression, then extends into an AI study coach that diagnoses learning gaps, retrieves educational resources, and generates personalized multi-week study plans. The final implementation is deployed through a Streamlit interface and supports structured recommendations with Markdown/PDF report export.
 \end{abstract}
 
 \begin{IEEEkeywords}
-Educational data mining, learning analytics, Logistic Regression, agentic AI, study planning, retrieval-augmented recommendations.
+Data mining, machine learning, learning analytics, classification, feature engineering, agentic AI.
 \end{IEEEkeywords}
 
 % ---------- INTRODUCTION ----------
 \section{Introduction}
-The educational landscape is increasingly utilizing data to improve student outcomes. Identifying students who may be at risk of academic failure early on allows for timely intervention. This project aims to bridge the gap between performance data and actionable study plans.
+Educational institutions increasingly rely on data-driven systems to identify student learning gaps and provide timely support. Early detection of underperformance can reduce long-term academic risk and improve intervention outcomes. This project addresses that need by combining a supervised classification model with an agentic recommendation layer that converts performance insights into actionable study plans. The goal is to build a publicly deployable system that supports both analytics and personalized coaching.
 
 % ---------- RELATED WORK ----------
 \section{Related Work}
-Previous research in Educational Data Mining (EDM) has explored various classification techniques, including Decision Trees, SVMs, and Neural Networks, to predict student success based on demographic and historical grade data.
+Prior Educational Data Mining (EDM) studies have applied classification methods such as Logistic Regression, Decision Trees, SVMs, and ensemble learners to predict academic outcomes from demographic and exam features. More recent work includes AI assistants that generate personalized learning recommendations. Our project follows this evolution by combining interpretable ML-based risk prediction with an agentic study coach pipeline.
 
 % ---------- METHODOLOGY ----------
 \section{Methodology}
-The methodology is organized in two layers: (1) ML-based analytics for performance prediction and (2) an agentic coaching layer for personalized planning.
-
-\subsection{System Workflow}
-The final application follows a hybrid analytics + agentic pipeline:
-\begin{enumerate}
-    \item \textbf{Data Ingestion}: Raw student performance data (CSV) is uploaded via the dashboard.
-    \item \textbf{Preprocessing and Feature Engineering}: Categorical demographic features are label-encoded; total and percentage scores are computed to derive performance categories.
-    \item \textbf{ML Inference (Milestone 1)}: A trained Logistic Regression model predicts student risk/performance labels.
-    \item \textbf{Goal Capture (Milestone 2)}: The student provides a learning goal, study style, available weekly time, and study horizon.
-    \item \textbf{Learning Diagnosis}: The agentic layer identifies strengths, gap areas, and risk level using student scores and derived indicators.
-    \item \textbf{Resource Retrieval}: Gap-aware queries are sent to the arXiv API to collect relevant learning resources and URLs.
-    \item \textbf{Plan Generation}: An LLM-based module creates a structured report with diagnosis, personalized plan, weekly goals, resources, and next steps.
-    \item \textbf{Fallback and Delivery}: If LLM inference is unavailable, a rule-based planner generates the same required structured output; reports are shown in UI and exported as Markdown/PDF.
-\end{enumerate}
 
 \subsection{Dataset Description}
-The dataset consists of 1,000 student records from a simulated exam environment, featuring eight attributes: gender, race/ethnicity, parental education, lunch type, test preparation course, math score, reading score, and writing score.
+The primary dataset contains 1,000 student records with attributes including gender, race/ethnicity, parental level of education, lunch type, test preparation course, and subject scores (math, reading, writing). A derived target variable (\textit{performance category}) is created from average score thresholds.
 
 \subsection{Preprocessing}
-Categorical variables were encoded using Label Encoding. Scores were aggregated to calculate total percentages. The data was scaled using Standard Scaler before training models.
+Categorical variables are encoded using Label Encoding. Total score and percentage are computed from the three subject scores. Features used for model inference are standardized with StandardScaler. Missing values are validated during CSV ingestion in the dashboard workflow.
 
 \subsection{Feature Engineering}
-A new feature, "performance category," was derived from the average of the three test scores, serving as the target variable for multi-class classification.
+We derive:
+\begin{itemize}
+    \item \textbf{Total score}: sum of math, reading, writing.
+    \item \textbf{Percentage}: mean of the three subject scores.
+    \item \textbf{Performance category}: At-risk ($<$50), Average (50--79), High-performing ($\geq$80).
+\end{itemize}
+These engineered variables support both supervised classification and downstream recommendation logic.
 
 \subsection{Models Used}
-We used two model components:
+The system includes two modeling components:
 \begin{itemize}
-    \item \textbf{Logistic Regression} for supervised student performance classification (Milestone 1).
-    \item \textbf{Open-source/free-tier LLM workflow} for plan generation (Milestone 2), using Hugging Face inference when token access is available, otherwise local open-source inference, and a deterministic fallback template if model calls fail.
+    \item \textbf{Logistic Regression}: baseline supervised model for student risk/performance classification.
+    \item \textbf{Agentic LLM layer}: free/open-source generation workflow that transforms diagnosis results into structured study plans with fallback behavior if model inference is unavailable.
 \end{itemize}
 
 \subsection{Training and Validation}
-The dataset was split into 80\% training and 20\% testing sets. Performance was evaluated using Accuracy, Precision, Recall, and F1-score.
+The dataset is split 80/20 for train-test evaluation. Performance is measured using Accuracy, Precision, Recall, and F1-score. We prioritize clear baseline interpretability for educational use while supplementing outcomes with rule-based and agent-generated recommendations.
 
 % ---------- RESULTS ----------
 \section{Results}
 
 \subsection{Quantitative Results}
-The Logistic Regression model was trained to predict student performance levels based on demographic data. The overall accuracy achieved was 70\%. Table I summarizes the performance across different metrics.
+The Logistic Regression model achieved approximately 70\% test accuracy. Table I summarizes model performance metrics.
 
 \begin{table}[ht]
 \centering
-\caption{Model Performance Metrics}
+\caption{Model Performance Comparison}
 \begin{tabular}{lcccc}
 \toprule
 Model & Acc & Prec & Rec & F1 \\
@@ -109,7 +101,7 @@ Logistic Regression & 0.70 & 0.54 & 0.70 & 0.59 \\
 \end{tabular}
 \end{table}
 
-To provide dataset-level context for the model performance, Table II reports key descriptive statistics and class distribution after deriving performance categories from average score thresholds.
+Table II reports descriptive statistics and class distribution used for analysis.
 
 \begin{table}[ht]
 \centering
@@ -131,29 +123,29 @@ High-performing count & 198 \\
 \end{table}
 
 \subsection{Milestone 2 Functional Results}
-The deployed agentic coach successfully generates the required structured report sections for user-defined goals:
+The deployed AI study coach generates the required structured output for user-defined goals:
 \begin{itemize}
-    \item Learning diagnosis (risk, strengths, and learning gaps),
-    \item Personalized multi-week study plan,
-    \item Weekly milestones/goals,
+    \item Learning diagnosis (risk, strengths, and gaps),
+    \item Personalized study plan,
+    \item Weekly/milestone goals,
     \item Recommended resources with URLs,
-    \item Progress feedback and next-step guidance.
+    \item Progress feedback and next steps.
 \end{itemize}
-The system supports session-level coaching history and report export (Markdown/PDF). A robustness fix was integrated in the PDF pipeline to safely handle long unbroken tokens (such as URLs), preventing rendering failures in deployment environments.
+The system also supports session-level memory and downloadable Markdown/PDF coaching reports.
 
 \subsection{Qualitative Observations}
-Exploratory analysis indicated that math, reading, and writing scores are positively related, and distribution-level behavior was consistent with the class balance shown in Table II.
+The agentic layer improved practical utility by converting prediction outputs into actionable weekly plans. The fallback planner ensured stable behavior when LLM calls were unavailable, preserving output structure and usability.
 
 % ---------- DISCUSSION ----------
 \section{Discussion}
-While the baseline classifier offers useful risk stratification, precision for identifying At-risk students remains limited when relying mainly on demographic and exam aggregates. The agentic extension improves practical usefulness by converting model outputs and score gaps into actionable, time-aware study plans. Resource retrieval from arXiv provides transparent, citeable references, but retrieved materials can be research-oriented for some learners. LLM-based plan quality depends on model availability and latency; therefore, a deterministic fallback planner was included to preserve reliability and maintain required output structure under constrained free-tier conditions.
+The baseline classifier provides effective risk stratification but remains limited by feature granularity and class imbalance. Integrating an agentic recommendation layer addresses this gap by adding goal-aware planning and retrieval-based resource support. However, recommendation quality may vary based on LLM availability, latency, and retrieved resource relevance. Future improvements can include richer learner behavior signals, adaptive difficulty, and persistent long-term memory.
 
 % ---------- CONCLUSION ----------
 \section{Conclusion}
-This work demonstrates a complete progression from classical learning analytics to an agentic AI study coach. Logistic Regression provided an interpretable baseline for student risk classification, and the Milestone 2 extension operationalized these insights through goal-driven diagnosis, resource retrieval, and personalized study planning in a publicly deployable interface. The resulting system satisfies the required educational outputs while remaining compatible with free/open-source tooling. Future work can include persistent longitudinal memory, adaptive difficulty calibration, and domain-specific retrieval corpora to improve pedagogical alignment.
+This project demonstrates a full transition from ML-based learning analytics to an agentic AI study coach in a single deployable system. Logistic Regression provides interpretable baseline predictions, while the agentic layer generates structured, personalized study plans aligned with student goals. The final application meets milestone requirements with free/open-source compatible tooling and public deployment readiness.
 
 % ---------- REFERENCES ----------
-\bibliographystyle{IEEEtran}
+\bibliographystyle{IEEEtranN}
 \bibliography{references}
 
 % ---------- APPENDIX ----------
@@ -164,7 +156,7 @@ This work demonstrates a complete progression from classical learning analytics 
 This appendix provides details regarding the project’s GitHub repository and associated file structure for reproducibility and open-source collaboration.
 
 \subsection{Repository Link}
-The code and docs are available at:
+The complete source code, trained models, and documentation are available at:
 
 \begin{center}
 \textbf{\url{https://github.com/LuciferVid/learning_analytics}}
@@ -177,7 +169,7 @@ The project follows this layout:
 .
 |-- data/ (datasets)
 |-- notebooks/ (EDA)
-|-- src/ (preprocessing, models, coach modules)
+|-- src/ (preprocessing, ML, and coach modules)
 |-- models/ (trained pkls)
 |-- results/ (plots)
 |-- app.py (streamlit app)
@@ -190,10 +182,12 @@ The project follows this layout:
 \begin{itemize}
     \item \textbf{data/}: Raw student score data.
     \item \textbf{notebooks/}: Initial analysis and experiments.
-    \item \textbf{src/}: Python modules for preprocessing, ML inference, agentic coaching, retrieval, and PDF export.
+    \item \textbf{src/}: Modular Python source code for preprocessing, classification, retrieval, planning, and report export.
     \item \textbf{models/}: Saved model, scaler, and encoders.
     \item \textbf{results/}: Generated graphs and tables.
-    \item \textbf{app.py}: Interactive Streamlit dashboard with Milestone 1 and Milestone 2 workflows.
+    \item \textbf{requirements.txt}: Python dependencies.
+    \item \textbf{README.md}: Setup and execution instructions.
+    \item \textbf{app.py}: Interactive dashboard for analytics and AI coaching.
 \end{itemize}
 
 \end{document}
